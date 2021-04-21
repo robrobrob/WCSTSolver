@@ -251,6 +251,7 @@ public class Solver {
 //OTHER VARIANT
     public int ask(boolean lastCorrect, Card card, ArrayList<Card> options) {
         this.options = options;
+        System.out.println("Alt Options");
         System.out.println("Options:" + options);
         int choice = 0;
         if(lastCorrect) { //Correct
