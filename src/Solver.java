@@ -251,10 +251,10 @@ public class Solver {
 //OTHER VARIANT
     public int ask(boolean lastCorrect, Card card, ArrayList<Card> options) {
         this.options = options;
-        System.out.println("Options:" + options);
+        //System.out.println("Options:" + options);
         int choice = 0;
         if(lastCorrect) { //Correct
-            System.out.println("Correct - Last perceived rule: " + perceivedRule);
+            //System.out.println("Correct - Last perceived rule: " + perceivedRule);
             lastPerceivedRule.add(new Guess(oldRule,true));
             switch (perceivedRule) {
                 case COLOR:
