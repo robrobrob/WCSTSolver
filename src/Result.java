@@ -4,6 +4,7 @@ public class Result {
     int numWrong;
     int maxNumWrongInARow;
     int numValidRuns;
+    int totalCards;
 
     public Result(int numCorrect, int maxNumCorrectInARow, int numWrong, int maxNumWrongInARow, int numValidRuns) {
         this.numCorrect = numCorrect;
@@ -15,12 +16,14 @@ public class Result {
 
     @Override
     public String toString() {
+        totalCards = numCorrect + numWrong;
         return "Result{" +
                 "numCorrect=" + numCorrect +
                 ", maxNumCorrectInARow=" + maxNumCorrectInARow +
                 ", numWrong=" + numWrong +
                 ", maxNumWrongInARow=" + maxNumWrongInARow +
                 ", numValidRuns=" + numValidRuns +
+                ", totalCards=" + totalCards +
                 '}';
     }
 }
