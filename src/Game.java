@@ -3,6 +3,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class Game {
+	boolean speak = true;
     ArrayList<Card> deck = new ArrayList<Card>();
     int numCardsInDeck;
     int numRunsThroughDeck;
@@ -28,6 +29,8 @@ public class Game {
 	final String ANSI_WHITE = "\u001B[97m";
 	final String ANSI_GREY_BACKGROUND = "\u001B[48;5;242m";
 	final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
+	final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
+	final String ANSI_RED_BACKGROUND = "\u001B[41m";
 
     public Game(int numCardsInDeck, int numRunsThroughDeck, int numCardsCorrectTillChange, boolean standardOptions) {
         this.numCardsInDeck = numCardsInDeck;
@@ -91,8 +94,7 @@ public class Game {
                 }
                 toSort = deck.get(possibilities.get(random.nextInt(possibilities.size()))); //Get the card to be sorted
                 boolean optionsMade = false;
-                /*
-                if(!standardOptions) {
+                if(!standardOptions) { //Make new options every time
                     do {
                         options.clear();
                         ArrayList<Integer> numberOptions = new ArrayList<Integer>();
@@ -103,68 +105,14 @@ public class Game {
                         ArrayList<Shape> shapeOptions = new ArrayList<Shape>(Arrays.asList(Shape.values()));
                         ArrayList<Color> colorOptions = new ArrayList<Color>(Arrays.asList(Color.values()));
                         for(int y = 0;y<4;) {
-                            if(y != 3){
-                                int chosenNumber = numberOptions.get(random.nextInt(numberOptions.size()));
-                                Shape chosenShape = shapeOptions.get(random.nextInt(shapeOptions.size()));
-                                Color chosenColor = colorOptions.get(random.nextInt(colorOptions.size()));
-                                Card genCard = new Card(chosenNumber,chosenShape,chosenColor);
-                                if(genCard.compareTo(toSort) != 0){
-                                    options.add(genCard);
-                                    numberOptions.remove(numberOptions.indexOf(chosenNumber));
-                                    shapeOptions.remove(shapeOptions.indexOf(chosenShape));
-                                    colorOptions.remove(colorOptions.indexOf(chosenColor));
-                                    y++;
-                                }
-                            } else if(y == 3){
-                                int chosenNumber = numberOptions.get(0);
-                                Shape chosenShape = shapeOptions.get(0);
-                                Color chosenColor = colorOptions.get(0);
-                                Card genCard = new Card(chosenNumber,chosenShape,chosenColor);
-                                if(genCard.compareTo(toSort) != 0){
-                                    options.add(genCard);
-                                    numberOptions.remove(numberOptions.indexOf(chosenNumber));
-                                    shapeOptions.remove(shapeOptions.indexOf(chosenShape));
-                                    colorOptions.remove(colorOptions.indexOf(chosenColor));
-                                    if((options.size() == 4)) {
-                                        optionsMade = true;
-                                    }
-                                    y++;
-                                } else {
-                                    y++;
-                                }
-                            }
-
-                        }
-                        System.out.println(options);
-                    } while (optionsMade == false);
-                }
-                */
-                if(!standardOptions) {
-                    do {
-                        options.clear();
-                        ArrayList<Integer> numberOptions = new ArrayList<Integer>();
-                        numberOptions.add(0);
-                        numberOptions.add(1);
-                        numberOptions.add(2);
-                        numberOptions.add(3);
-                        ArrayList<Shape> shapeOptions = new ArrayList<Shape>(Arrays.asList(Shape.values()));
-                        ArrayList<Color> colorOptions = new ArrayList<Color>(Arrays.asList(Color.values()));
-                        for(int y = 0;y<4;) {
-                            Card genCard = new Card(0,Shape.CIRCLE,Color.RED);
+                            Card genCard;
                             int chosenNumber;
                             Shape chosenShape;
                             Color chosenColor;
-                            if(y != 3) {
-                                chosenNumber = numberOptions.get(random.nextInt(numberOptions.size()));
-                                chosenShape = shapeOptions.get(random.nextInt(shapeOptions.size()));
-                                chosenColor = colorOptions.get(random.nextInt(colorOptions.size()));
-                                genCard = new Card(chosenNumber,chosenShape,chosenColor);
-                            } else {
-                                chosenNumber = numberOptions.get(0);
-                                chosenShape = shapeOptions.get(0);
-                                chosenColor = colorOptions.get(0);
-                                genCard = new Card(chosenNumber,chosenShape,chosenColor);
-                            }
+							chosenNumber = y!=3 ? numberOptions.get(random.nextInt(numberOptions.size())) : numberOptions.get(0);
+							chosenShape = y!=3 ? shapeOptions.get(random.nextInt(shapeOptions.size())) : shapeOptions.get(0);
+							chosenColor = y!=3 ? colorOptions.get(random.nextInt(colorOptions.size())) : colorOptions.get(0);
+							genCard = new Card(chosenNumber,chosenShape,chosenColor);
                             if(genCard.compareTo(toSort) != 0){
                                 options.add(genCard);
                                 numberOptions.remove(numberOptions.indexOf(chosenNumber));
@@ -178,10 +126,9 @@ public class Game {
                                 y++;
                             }
                         }
-                        System.out.println(options);
                     } while (optionsMade == false);
                 }
-                System.out.println("---- " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { Times through deck: " + z + " Card in Deck: "+ Math.addExact(i,1) + " } ----");
+                speakGameTurnStart(z,i);
                 choice = solver.ask(correct,toSort,options); //Ask the Solver to sort a card and give tell it if the last guess was correct
                 if (matchesRule(choice, options, toSort, rule)) { //If the solver was correct
                     correct = true;
@@ -194,7 +141,7 @@ public class Game {
                     if(numCorrectInARow > 10) {
                         if(random.nextInt(2) == 1) {
                             rule = getNewRule(rule);
-                            System.out.println(ANSI_CYAN_BACKGROUND + ANSI_WHITE + "Tester" + ANSI_RESET +" { Valid Run Completed - Rule Change }");
+                            speakGameRuleChange();
                             numValidRuns++;
                             if(numValidRuns > 8) {
                                 break;
@@ -210,10 +157,10 @@ public class Game {
                         maxNumWrongInARow = numWrongInARow;
                     }
                 }
-                System.out.println("//// " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { END TURN } ////");
+                speakGameTurnEnd();
             }
             if (numValidRuns > 8) {
-                System.out.println("//// " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { END TURN } ////");
+            	speakGameTurnEnd();
                 break;
             }
         }
@@ -265,48 +212,70 @@ public class Game {
 	 */
     private boolean matchesRule(int iChoice, ArrayList<Card> iOptions, Card card, Match iRule) {
         boolean right = false;
-        final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
-        final String ANSI_RED_BACKGROUND = "\u001B[41m";
-
-        System.out.println(ANSI_CYAN_BACKGROUND + ANSI_WHITE + "Tester" + ANSI_RESET + " {");
-		System.out.println(" Rule: " + iRule);
-        System.out.println(" Options to Match from: ");
-        iOptions.forEach(cards -> System.out.print(" " +cards.toGraphicalString()));
-        System.out.println(
-                "\n" + " Card to Sort: " + card.toGraphicalString());
-        System.out.println(
-                " Solver matched to: " +
-                        iOptions.get(iChoice).toGraphicalString());
-
+        speakTester(iChoice,iOptions,card,iRule);
         switch (iRule) {
             case COLOR:
                 if(iOptions.get(iChoice).getColor() == toSort.getColor()){
                     right = true;
-                    System.out.println(
-                            ANSI_GREEN_BACKGROUND + ANSI_WHITE + " Result: Correct " + ANSI_RESET);
+                    speakTesterCorrect();
                 }
                 break;
             case SHAPE:
                 if(iOptions.get(iChoice).getShape() == toSort.getShape()){
                     right = true;
-                    System.out.println(
-                            ANSI_GREEN_BACKGROUND + ANSI_WHITE + " Result: Correct " + ANSI_RESET);
+					speakTesterCorrect();
                 }
                 break;
             case NUMBER:
                 if(iOptions.get(iChoice).getNumber() == toSort.getNumber()){
                     right = true;
-                    System.out.println(
-                            ANSI_GREEN_BACKGROUND + ANSI_WHITE + " Result: Correct " + ANSI_RESET);
+					speakTesterCorrect();
                 }
                 break;
         }
         if (!right) {
-            System.out.println(
-                    ANSI_RED_BACKGROUND + ANSI_WHITE + " Result: Incorrect " + ANSI_RESET);
+            speakTesterWrong();
         }
-		System.out.println("}");
+		speakTesterTerminator();
         return right;
     }
+
+    //Speaking to the user methods
+
+    private void speakGameTurnStart(int z, int i) {
+    	if(speak) System.out.println("---- " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { Times through deck: " + z + " Card in Deck: "+ Math.addExact(i,1) + " } ----");
+
+	}
+
+	private void speakGameRuleChange() {
+		if(speak) System.out.println(ANSI_CYAN_BACKGROUND + ANSI_WHITE + "Tester" + ANSI_RESET +" { Valid Run Completed - Rule Change }");
+	}
+
+	private void speakGameTurnEnd() {
+		if(speak) System.out.println("//// " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { END TURN } ////");
+	}
+
+	private void speakTester(int iChoice, ArrayList<Card> iOptions, Card card, Match iRule) {
+		if(speak) {
+			System.out.println(ANSI_CYAN_BACKGROUND + ANSI_WHITE + "Tester" + ANSI_RESET + " {");
+			System.out.println(" Rule: " + iRule);
+			System.out.println(" Options to Match from: ");
+			iOptions.forEach(cards -> System.out.print(" " + cards.toGraphicalString()));
+			System.out.println("\n" + " Card to Sort: " + card.toGraphicalString());
+			System.out.println(" Solver matched to: " + iOptions.get(iChoice).toGraphicalString());
+		}
+	}
+
+	private void speakTesterCorrect() {
+		if(speak) System.out.println(ANSI_GREEN_BACKGROUND + ANSI_WHITE + " Result: Correct " + ANSI_RESET);
+	}
+
+	private void speakTesterWrong() {
+		if(speak) System.out.println(ANSI_RED_BACKGROUND + ANSI_WHITE + " Result: Incorrect " + ANSI_RESET);
+	}
+
+	private void speakTesterTerminator() {
+		if(speak) System.out.println("}");
+	}
 
 }
