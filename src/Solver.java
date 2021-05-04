@@ -13,6 +13,8 @@ public class Solver {
     final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
     final String ANSI_WHITE = "\u001B[97m";
 
+    //Constructor
+
     public Solver(){
         lastPerceivedRule = new ArrayList<Guess>();
         perceivedRule = Match.values()[random.nextInt(3)];
@@ -20,41 +22,52 @@ public class Solver {
         lookBack = 2;
     }
 
+	//Helper Methods
+
+	/**
+	 * Asks the Solver to choose the correct card from a set of Cards and lets the Solver know whether its last choice was correct.
+	 * The Solver will use a perceived rule to choose the correct card from the provided options
+	 * @param lastCorrect Was the Solver correct last time
+	 * @param card The Card to match to a card within the provided options
+	 * @param options The set of Cards to match to
+	 * @return the index of the Card (within the set of options) that the Solver chooses to match to
+	 */
+
     public int ask(boolean lastCorrect, Card card, ArrayList<Card> options) {
         this.options = options;
         speakSolverStart();
         int choice = 0;
         if(lastCorrect) { //Correct
-            speakCorrect(perceivedRule);
+            speakCorrect(perceivedRule); //@SPEAK
             lastPerceivedRule.add(new Guess(oldRule,true));
             choice = setChoice(perceivedRule,card,options); //Set Choice
             oldRule = perceivedRule;
-            speakSolverEnd();
+            speakSolverEnd(); //@SPEAK
             return choice;
         } else { //Not Correct
             lastPerceivedRule.add(new Guess(oldRule,false));
             if(lastPerceivedRule.size()>2) { //If we are farther in
-                speakWrong(perceivedRule);
+                speakWrong(perceivedRule); //@SPEAK
                 if(!lastPerceivedRule.get(lastPerceivedRule.size()-lookBack).isWasCorrect()) {
-                    speakWrongTwoRoundsAgo(lastPerceivedRule);
+                    speakWrongTwoRoundsAgo(lastPerceivedRule); //@SPEAK
                     perceivedRule = deduceRule(lastPerceivedRule); //Deduce
                     choice = setChoice(perceivedRule,card,options); //Set Choice
                     oldRule = perceivedRule;
-                    speakSolverEnd();
+                    speakSolverEnd(); //@SPEAK
                     return choice;
                 } else { //Random guess since we were only wrong once
                     perceivedRule = guessRule(perceivedRule); //Guess
                     choice = setChoice(perceivedRule,card,options); //Set Choice
                     oldRule = perceivedRule;
-                    speakSolverEnd();
+                    speakSolverEnd(); //@SPEAK
                     return choice;
                 }
             } else { //If we are not in far enough
-                speakWrongWithExcuse();
+                speakWrongWithExcuse(); //@SPEAK
                 perceivedRule = guessRule(perceivedRule); //Guess
                 choice = setChoice(perceivedRule,card,options); //Set Choice
                 oldRule = perceivedRule;
-                speakSolverEnd();
+                speakSolverEnd(); //@SPEAK
                 return choice;
             }
         }
@@ -94,21 +107,23 @@ public class Solver {
             case SHAPE -> random.nextInt(2) == 1 ? Match.NUMBER : Match.COLOR;
             case NUMBER -> random.nextInt(2) == 1 ? Match.COLOR : Match.SHAPE;
         };
-        speakNewGuessedRule(perceivedRule);
+        speakNewGuessedRule(perceivedRule); //@SPEAK
         return perceivedRule;
     }
 
     private Match deduceRule(ArrayList<Guess> lastPerceivedRule) { //Deduce
         Match perceivedRule = Match.NUMBER;
-        speakWrongOneRoundAgo(lastPerceivedRule);
+        speakWrongOneRoundAgo(lastPerceivedRule); //@SPEAK
         perceivedRule = switch (lastPerceivedRule.get(lastPerceivedRule.size() - (lookBack)).getRule()) {
             case COLOR -> lastPerceivedRule.get(lastPerceivedRule.size() - (lookBack - 1)).getRule() == Match.SHAPE ? Match.NUMBER : Match.SHAPE;
             case SHAPE -> lastPerceivedRule.get(lastPerceivedRule.size() - (lookBack - 1)).getRule() == Match.NUMBER ? Match.COLOR : Match.NUMBER;
             case NUMBER -> lastPerceivedRule.get(lastPerceivedRule.size() - (lookBack - 1)).getRule() == Match.COLOR ? Match.SHAPE : Match.COLOR;
         };
-        speakNewRule(perceivedRule);
+        speakNewRule(perceivedRule); //@SPEAK
         return perceivedRule;
     }
+
+	//Speaking methods
 
     private void speakSolverStart() {
         System.out.println(ANSI_PURPLE_BACKGROUND + ANSI_WHITE + "Solver" + ANSI_RESET + " {");

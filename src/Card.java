@@ -8,12 +8,15 @@ public class Card implements Comparable<Card> {
     public static final String ANSI_YELLOW = "\u001B[33m";
     public static final String ANSI_BLUE = "\u001B[34m";
 
+	//Constructor
 
     public Card(int number, Shape shape, Color color) {
         this.number = number;
         this.shape = shape;
         this.color = color;
     }
+
+    //Getters
 
     public int getNumber() {
         return number;
@@ -27,36 +30,34 @@ public class Card implements Comparable<Card> {
         return color;
     }
 
-    @Override
-    public String toString() {
-        return "Card{" +
-                "number=" + number +
-                ", shape=" + shape +
-                ", color=" + color +
-                '}';
-    }
+	public static String getANSIReset() {
+		return ANSI_RESET;
+	}
 
-    public static String getAnsiReset() {
-        return ANSI_RESET;
-    }
+	public static String getANSIRed() {
+		return ANSI_RED;
+	}
 
-    public static String getAnsiRed() {
-        return ANSI_RED;
-    }
+	public static String getANSIGreen() {
+		return ANSI_GREEN;
+	}
 
-    public static String getAnsiGreen() {
-        return ANSI_GREEN;
-    }
+	public static String getANSIYellow() {
+		return ANSI_YELLOW;
+	}
 
-    public static String getAnsiYellow() {
-        return ANSI_YELLOW;
-    }
+	public static String getANSIBlue() {
+		return ANSI_BLUE;
+	}
 
-    public static String getAnsiBlue() {
-        return ANSI_BLUE;
-    }
+	//Helper methods
 
-    public String toGraphicalString() {
+	/**
+	 * Returns a string of a number of colored shapes, meaning to represent the card graphically
+	 * @return a graphical String representing the Card
+	 */
+
+	public String toGraphicalString() {
         int numCounter = -1;
         String toReturn = "";
         for(int i = 1; i<5; i++) {
@@ -70,27 +71,45 @@ public class Card implements Comparable<Card> {
                     case TRIANGLE -> toReturn.concat("▲");
                     case CROSS -> toReturn.concat("✚");
                 };
-                toReturn = toReturn.concat(ANSI_RESET);
+                toReturn = toReturn.concat(getANSIReset());
                 numCounter++;
             }
         }
         return toReturn;
     }
 
-    @Override
-    public int compareTo(Card c) { //Return 0 if they match, otherwise return -1
-        if((this.getNumber() == c.getNumber()) && (this.getShape() == c.getShape()) && (this.getColor() == c.getColor())) {
-            return 0;
-        }
-        return -1;
-    }
+	/**
+	 * Returns a String with an ANSI color code appended to it, given a String to begin with and a Color to append
+	 * @param string the String to append the ANSI color code to
+	 * @param color the Color of the ANSI color code
+	 * @return a String with a ANSI color code appended to it, matching the specified Color
+	 */
 
-    public String appendANSIFromColor(String string, Color color) {
+	public String appendANSIFromColor(String string, Color color) {
         return string + switch(color) {
-            case RED -> ANSI_RED;
-            case GREEN -> ANSI_GREEN;
-            case BLUE -> ANSI_BLUE;
-            case YELLOW -> ANSI_YELLOW;
+            case RED -> getANSIRed();
+            case GREEN -> getANSIGreen();
+            case BLUE -> getANSIBlue();
+            case YELLOW -> getANSIYellow();
         };
     }
+
+	//Overridden methods
+
+	@Override
+	public String toString() {
+		return "Card{" +
+				"number=" + number +
+				", shape=" + shape +
+				", color=" + color +
+				'}';
+	}
+
+	@Override
+	public int compareTo(Card c) { //Return 0 if they match, otherwise return -1
+		if((this.getNumber() == c.getNumber()) && (this.getShape() == c.getShape()) && (this.getColor() == c.getColor())) {
+			return 0;
+		}
+		return -1;
+	}
 }

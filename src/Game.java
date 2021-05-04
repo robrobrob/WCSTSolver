@@ -83,7 +83,7 @@ public class Game {
         rule = Match.values()[random.nextInt(3)];
         for (int z  = 0; z<numRunsThroughDeck; z++) { //Run through the deck
             for (int i = 0; i < deck.size(); i++) { //Run through the cards in the deck
-                ArrayList<Integer> possibilities = new ArrayList<Integer>();
+                ArrayList<Integer> possibilities = new ArrayList<>();
                 for (int y = 0;y<deck.size();y++) { //Generate the possible cards to chose from, so as to not choose the same card as the last card
                     if (y != i) {
                         possibilities.add(y);
@@ -97,13 +97,13 @@ public class Game {
                 if(!standardOptions) { //Make new options every time
                     do {
                         options.clear();
-                        ArrayList<Integer> numberOptions = new ArrayList<Integer>();
+                        ArrayList<Integer> numberOptions = new ArrayList<>();
                         numberOptions.add(0);
                         numberOptions.add(1);
                         numberOptions.add(2);
                         numberOptions.add(3);
-                        ArrayList<Shape> shapeOptions = new ArrayList<Shape>(Arrays.asList(Shape.values()));
-                        ArrayList<Color> colorOptions = new ArrayList<Color>(Arrays.asList(Color.values()));
+                        ArrayList<Shape> shapeOptions = new ArrayList<>(Arrays.asList(Shape.values()));
+                        ArrayList<Color> colorOptions = new ArrayList<>(Arrays.asList(Color.values()));
                         for(int y = 0;y<4;) {
                             Card genCard;
                             int chosenNumber;
@@ -115,9 +115,9 @@ public class Game {
 							genCard = new Card(chosenNumber,chosenShape,chosenColor);
                             if(genCard.compareTo(toSort) != 0){
                                 options.add(genCard);
-                                numberOptions.remove(numberOptions.indexOf(chosenNumber));
-                                shapeOptions.remove(shapeOptions.indexOf(chosenShape));
-                                colorOptions.remove(colorOptions.indexOf(chosenColor));
+                                numberOptions.remove(chosenNumber);
+                                shapeOptions.remove(chosenShape);
+                                colorOptions.remove(chosenColor);
                                 if((options.size() == 4)) {
                                     optionsMade = true;
                                 }
@@ -126,7 +126,7 @@ public class Game {
                                 y++;
                             }
                         }
-                    } while (optionsMade == false);
+                    } while (!optionsMade);
                 }
                 speakGameTurnStart(z,i);
                 choice = solver.ask(correct,toSort,options); //Ask the Solver to sort a card and give tell it if the last guess was correct
@@ -173,7 +173,7 @@ public class Game {
 	 * Returns a new Match rule for the test to use. Takes a Match rule and excludes it from the selection process.
 	 *
 	 * @param iRule The Match rule to exclude
-	 * @return		The new, randomly generated Match rule
+	 * @return		a new, randomly generated Match rule
 	 */
 
 	private Match getNewRule(Match iRule) {
@@ -240,7 +240,7 @@ public class Game {
         return right;
     }
 
-    //Speaking to the user methods
+    //Speaking methods
 
     private void speakGameTurnStart(int z, int i) {
     	if(speak) System.out.println("---- " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { Times through deck: " + z + " Card in Deck: "+ Math.addExact(i,1) + " } ----");
