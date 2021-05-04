@@ -20,7 +20,7 @@ public class Result {
         return "Result{" +
                 " Number of times Solver performed correct sorting operations = " + numCorrect +
                 ", Number of times Solver was correct in a row = " + maxNumCorrectInARow +
-                ", Number of times Solver performed incorrect sorting operations = " + numWrong + "\n" +
+                ", Number of times Solver performed incorrect sorting operations = " + numWrong +
                 ", Number of times Solver was incorrect in a row = " + maxNumWrongInARow +
                 ", Number of Valid Runs completed = " + numValidRuns +
                 ", Number of Cards seen = " + totalCards +

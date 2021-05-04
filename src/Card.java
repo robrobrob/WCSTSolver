@@ -56,64 +56,25 @@ public class Card implements Comparable<Card> {
         return ANSI_BLUE;
     }
 
-
     public String toGraphicalString() {
         int numCounter = -1;
         String toReturn = "";
-
-
         for(int i = 1; i<5; i++) {
             if(numCounter == number) {
                 toReturn = toReturn.concat(" ");
             } else {
-                switch (color) {
-                    case RED -> {
-                        toReturn = toReturn.concat(ANSI_RED);
-                        toReturn = switch (shape) {
-                            case CIRCLE -> toReturn.concat("●");
-                            case STAR -> toReturn.concat("★");
-                            case TRIANGLE -> toReturn.concat("▲");
-                            case CROSS -> toReturn.concat("✚");
-                        };
-                        toReturn = toReturn.concat(ANSI_RESET);
-                    }
-                    case GREEN -> {
-                        toReturn = toReturn.concat(ANSI_GREEN);
-                        toReturn = switch (shape) {
-                            case CIRCLE -> toReturn.concat("●");
-                            case STAR -> toReturn.concat("★");
-                            case TRIANGLE -> toReturn.concat("▲");
-                            case CROSS -> toReturn.concat("✚");
-                        };
-                        toReturn = toReturn.concat(ANSI_RESET);
-                    }
-                    case BLUE -> {
-                        toReturn = toReturn.concat(ANSI_BLUE);
-                        toReturn = switch (shape) {
-                            case CIRCLE -> toReturn.concat("●");
-                            case STAR -> toReturn.concat("★");
-                            case TRIANGLE -> toReturn.concat("▲");
-                            case CROSS -> toReturn.concat("✚");
-                        };
-                        toReturn = toReturn.concat(ANSI_RESET);
-                    }
-                    case YELLOW -> {
-                        toReturn = toReturn.concat(ANSI_YELLOW);
-                        toReturn = switch (shape) {
-                            case CIRCLE -> toReturn.concat("●");
-                            case STAR -> toReturn.concat("★");
-                            case TRIANGLE -> toReturn.concat("▲");
-                            case CROSS -> toReturn.concat("✚");
-                        };
-                        toReturn = toReturn.concat(ANSI_RESET);
-                    }
-                }
+                toReturn = appendANSIFromColor(toReturn,color);
+                toReturn = switch (shape) {
+                    case CIRCLE -> toReturn.concat("●");
+                    case STAR -> toReturn.concat("★");
+                    case TRIANGLE -> toReturn.concat("▲");
+                    case CROSS -> toReturn.concat("✚");
+                };
+                toReturn = toReturn.concat(ANSI_RESET);
                 numCounter++;
             }
         }
-
         return toReturn;
-
     }
 
     @Override
@@ -122,5 +83,14 @@ public class Card implements Comparable<Card> {
             return 0;
         }
         return -1;
+    }
+
+    public String appendANSIFromColor(String string, Color color) {
+        return string + switch(color) {
+            case RED -> ANSI_RED;
+            case GREEN -> ANSI_GREEN;
+            case BLUE -> ANSI_BLUE;
+            case YELLOW -> ANSI_YELLOW;
+        };
     }
 }

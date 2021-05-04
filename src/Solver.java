@@ -136,7 +136,7 @@ public class Solver {
     }
 
     private void speakNewGuessedRule(Match perceivedRule) {
-        System.out.println("The new, guessed perceived rule will be " + perceivedRule + ".");
+        System.out.println("The new, guessed rule will be " + perceivedRule + ".");
     }
 
     private void speakCorrect(Match perceivedRule) {
