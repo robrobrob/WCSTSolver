@@ -1,5 +1,5 @@
 public class Runner {
     public static void main(String[] args) {
-        Game game = new Game(64,2,10,true);
+        Game game = new Game(64,2,10,false);
     }
 }

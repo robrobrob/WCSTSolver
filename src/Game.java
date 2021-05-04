@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Game {
@@ -75,108 +76,148 @@ public class Game {
      * @return 					The Results of the test
      */
     private Result test(boolean standardOptions) {
+        solver = new Solver();
         rule = Match.values()[random.nextInt(3)];
-        if (standardOptions){
-            solver = new Solver(options);
-            for (int z  = 0; z<numRunsThroughDeck; z++) { //Run through the deck
-                for (int i = 0; i < deck.size(); i++) { //Run through the cards in the deck
-                    ArrayList<Integer> possibilities = new ArrayList<Integer>();
-                    for (int y = 0;y<deck.size();y++) { //Generate the possible cards to chose from, so as to not choose the same card as the last card
-                        if (y != i) {
-                            possibilities.add(y);
-                        }
+        for (int z  = 0; z<numRunsThroughDeck; z++) { //Run through the deck
+            for (int i = 0; i < deck.size(); i++) { //Run through the cards in the deck
+                ArrayList<Integer> possibilities = new ArrayList<Integer>();
+                for (int y = 0;y<deck.size();y++) { //Generate the possible cards to chose from, so as to not choose the same card as the last card
+                    if (y != i) {
+                        possibilities.add(y);
                     }
-                    if(z == 0 && i == 0) { //If this is the first card of the test
-                        correct = false;
-                    }
-                    toSort = deck.get(possibilities.get(random.nextInt(possibilities.size()))); //Get the card to be sorted
-                    System.out.println("---- " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { Times through deck: " + z + " Card in Deck: "+ Math.addExact(i,1) + " } ----");
-                    choice = solver.ask(correct,toSort); //Ask the Solver to sort a card and give tell it if the last guess was correct
-                    if (matchesRule(choice, options, toSort, rule)) { //If the solver was correct
-						correct = true;
-                        numWrongInARow = 0;
-                        numCorrect++;
-                        numCorrectInARow++;
-                        if(numCorrectInARow > maxNumCorrectInARow) { //If the numCorrectInARow is higher than the highest it has ever previously been
-                        	maxNumCorrectInARow = numCorrectInARow;
-						}
-                        if(numCorrectInARow > 10) {
-                            if(random.nextInt(2) == 1) {
-                                rule = getNewRule(rule);
-                                System.out.println(ANSI_CYAN_BACKGROUND + ANSI_WHITE + "Tester" + ANSI_RESET +" { Valid Run Completed - Rule Change }");
-                                numValidRuns++;
-                                if(numValidRuns > 8) {
-                                    break;
+                }
+                if(z == 0 && i == 0) { //If this is the first card of the test
+                    correct = false;
+                }
+                toSort = deck.get(possibilities.get(random.nextInt(possibilities.size()))); //Get the card to be sorted
+                boolean optionsMade = false;
+                /*
+                if(!standardOptions) {
+                    do {
+                        options.clear();
+                        ArrayList<Integer> numberOptions = new ArrayList<Integer>();
+                        numberOptions.add(0);
+                        numberOptions.add(1);
+                        numberOptions.add(2);
+                        numberOptions.add(3);
+                        ArrayList<Shape> shapeOptions = new ArrayList<Shape>(Arrays.asList(Shape.values()));
+                        ArrayList<Color> colorOptions = new ArrayList<Color>(Arrays.asList(Color.values()));
+                        for(int y = 0;y<4;) {
+                            if(y != 3){
+                                int chosenNumber = numberOptions.get(random.nextInt(numberOptions.size()));
+                                Shape chosenShape = shapeOptions.get(random.nextInt(shapeOptions.size()));
+                                Color chosenColor = colorOptions.get(random.nextInt(colorOptions.size()));
+                                Card genCard = new Card(chosenNumber,chosenShape,chosenColor);
+                                if(genCard.compareTo(toSort) != 0){
+                                    options.add(genCard);
+                                    numberOptions.remove(numberOptions.indexOf(chosenNumber));
+                                    shapeOptions.remove(shapeOptions.indexOf(chosenShape));
+                                    colorOptions.remove(colorOptions.indexOf(chosenColor));
+                                    y++;
+                                }
+                            } else if(y == 3){
+                                int chosenNumber = numberOptions.get(0);
+                                Shape chosenShape = shapeOptions.get(0);
+                                Color chosenColor = colorOptions.get(0);
+                                Card genCard = new Card(chosenNumber,chosenShape,chosenColor);
+                                if(genCard.compareTo(toSort) != 0){
+                                    options.add(genCard);
+                                    numberOptions.remove(numberOptions.indexOf(chosenNumber));
+                                    shapeOptions.remove(shapeOptions.indexOf(chosenShape));
+                                    colorOptions.remove(colorOptions.indexOf(chosenColor));
+                                    if((options.size() == 4)) {
+                                        optionsMade = true;
+                                    }
+                                    y++;
+                                } else {
+                                    y++;
                                 }
                             }
-                        }
-                    } else {
-						correct = false;
-                        numCorrectInARow = 0;
-                        numWrong++;
-                        numWrongInARow++;
-						if(numWrongInARow > maxNumWrongInARow) {
-							maxNumWrongInARow = numWrongInARow;
-						}
-                    }
-                    System.out.println("//// " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { END TURN } ////");
-                }
-                if (numValidRuns > 8) {
-					System.out.println("//// " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { END TURN } ////");
-                    break;
-                }
-            }
-        } else { //Generate options each time
-            System.out.println("VARIANT");
-            solver = new Solver();
-            for(int z  = 0; z<numRunsThroughDeck; z++) {
-                for (int i = 0; i < deck.size(); i++) {
-                    ArrayList<Integer> possibilities = new ArrayList<Integer>();
-                    for(int y = 0;y<deck.size();y++) {
-                        if(y != i) {
-                            possibilities.add(y);
-                        }
-                    }
-                    if(z == 0 && i == 0) {
-                        correct = false;
-                    }
-                    toSort = deck.get(possibilities.get(random.nextInt(possibilities.size())));
-                    System.out.println("---- " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { Times through deck: " + z + " Card in Deck: "+ Math.addExact(i,1) + " } ----");
-                    choice = solver.ask(correct,toSort,options);
-                    if(matchesRule(choice, options, toSort, rule)){
-                        numWrongInARow = 0;
-                        numCorrect++;
-                        numCorrectInARow++;
-						if(numCorrectInARow > maxNumCorrectInARow) {
-							maxNumCorrectInARow = numCorrectInARow;
-						}
-                        if(numCorrectInARow > 10) {
-                            if(random.nextInt(2) == 1) {
-                                rule = getNewRule(rule);
-								System.out.println(ANSI_CYAN_BACKGROUND + ANSI_WHITE + "Tester" + ANSI_RESET +" { Valid Run Completed - Rule Change }");
-                                numValidRuns++;
-                                if(numValidRuns > 8) {
-                                    break;
-                                }
-                            }
-                        }
-                    } else {
-                        numCorrectInARow = 0;
-                        numWrong++;
-                        numWrongInARow++;
-						if(numWrongInARow > maxNumWrongInARow) {
-							maxNumWrongInARow = numWrongInARow;
-						}
-                    }
-					System.out.println("//// " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { END TURN } ////");
-                }
-                if(numValidRuns > 8) {
-					System.out.println("//// " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { END TURN } ////");
-                    break;
-                }
-            }
 
+                        }
+                        System.out.println(options);
+                    } while (optionsMade == false);
+                }
+                */
+                if(!standardOptions) {
+                    do {
+                        options.clear();
+                        ArrayList<Integer> numberOptions = new ArrayList<Integer>();
+                        numberOptions.add(0);
+                        numberOptions.add(1);
+                        numberOptions.add(2);
+                        numberOptions.add(3);
+                        ArrayList<Shape> shapeOptions = new ArrayList<Shape>(Arrays.asList(Shape.values()));
+                        ArrayList<Color> colorOptions = new ArrayList<Color>(Arrays.asList(Color.values()));
+                        for(int y = 0;y<4;) {
+                            Card genCard = new Card(0,Shape.CIRCLE,Color.RED);
+                            int chosenNumber;
+                            Shape chosenShape;
+                            Color chosenColor;
+                            if(y != 3) {
+                                chosenNumber = numberOptions.get(random.nextInt(numberOptions.size()));
+                                chosenShape = shapeOptions.get(random.nextInt(shapeOptions.size()));
+                                chosenColor = colorOptions.get(random.nextInt(colorOptions.size()));
+                                genCard = new Card(chosenNumber,chosenShape,chosenColor);
+                            } else {
+                                chosenNumber = numberOptions.get(0);
+                                chosenShape = shapeOptions.get(0);
+                                chosenColor = colorOptions.get(0);
+                                genCard = new Card(chosenNumber,chosenShape,chosenColor);
+                            }
+                            if(genCard.compareTo(toSort) != 0){
+                                options.add(genCard);
+                                numberOptions.remove(numberOptions.indexOf(chosenNumber));
+                                shapeOptions.remove(shapeOptions.indexOf(chosenShape));
+                                colorOptions.remove(colorOptions.indexOf(chosenColor));
+                                if((options.size() == 4)) {
+                                    optionsMade = true;
+                                }
+                                y++;
+                            } else if((genCard.compareTo(toSort) == 0) && (y == 3)) {
+                                y++;
+                            }
+                        }
+                        System.out.println(options);
+                    } while (optionsMade == false);
+                }
+                System.out.println("---- " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { Times through deck: " + z + " Card in Deck: "+ Math.addExact(i,1) + " } ----");
+                choice = solver.ask(correct,toSort,options); //Ask the Solver to sort a card and give tell it if the last guess was correct
+                if (matchesRule(choice, options, toSort, rule)) { //If the solver was correct
+                    correct = true;
+                    numWrongInARow = 0;
+                    numCorrect++;
+                    numCorrectInARow++;
+                    if(numCorrectInARow > maxNumCorrectInARow) { //If the numCorrectInARow is higher than the highest it has ever previously been
+                        maxNumCorrectInARow = numCorrectInARow;
+                    }
+                    if(numCorrectInARow > 10) {
+                        if(random.nextInt(2) == 1) {
+                            rule = getNewRule(rule);
+                            System.out.println(ANSI_CYAN_BACKGROUND + ANSI_WHITE + "Tester" + ANSI_RESET +" { Valid Run Completed - Rule Change }");
+                            numValidRuns++;
+                            if(numValidRuns > 8) {
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    correct = false;
+                    numCorrectInARow = 0;
+                    numWrong++;
+                    numWrongInARow++;
+                    if(numWrongInARow > maxNumWrongInARow) {
+                        maxNumWrongInARow = numWrongInARow;
+                    }
+                }
+                System.out.println("//// " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { END TURN } ////");
+            }
+            if (numValidRuns > 8) {
+                System.out.println("//// " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { END TURN } ////");
+                break;
+            }
         }
+
 
         return new Result(numCorrect,maxNumCorrectInARow,numWrong,maxNumWrongInARow,numValidRuns);
     }

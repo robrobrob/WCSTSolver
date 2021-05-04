@@ -1,4 +1,4 @@
-public class Card {
+public class Card implements Comparable<Card> {
     int number;
     Shape shape;
     Color color;
@@ -114,5 +114,13 @@ public class Card {
 
         return toReturn;
 
+    }
+
+    @Override
+    public int compareTo(Card c) { //Return 0 if they match, otherwise return -1
+        if((this.getNumber() == c.getNumber()) && (this.getShape() == c.getShape()) && (this.getColor() == c.getColor())) {
+            return 0;
+        }
+        return -1;
     }
 }
