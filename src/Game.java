@@ -78,27 +78,26 @@ public class Game {
         rule = Match.values()[random.nextInt(3)];
         if (standardOptions){
             solver = new Solver(options);
-            for (int z  = 0; z<numRunsThroughDeck; z++) {
-                for (int i = 0; i < deck.size(); i++) {
+            for (int z  = 0; z<numRunsThroughDeck; z++) { //Run through the deck
+                for (int i = 0; i < deck.size(); i++) { //Run through the cards in the deck
                     ArrayList<Integer> possibilities = new ArrayList<Integer>();
-                    for (int y = 0;y<deck.size();y++) {
+                    for (int y = 0;y<deck.size();y++) { //Generate the possible cards to chose from, so as to not choose the same card as the last card
                         if (y != i) {
                             possibilities.add(y);
                         }
                     }
-                    if(z == 0 && i == 0) {
+                    if(z == 0 && i == 0) { //If this is the first card of the test
                         correct = false;
                     }
-                    toSort = deck.get(possibilities.get(random.nextInt(possibilities.size())));
+                    toSort = deck.get(possibilities.get(random.nextInt(possibilities.size()))); //Get the card to be sorted
                     System.out.println("---- " + ANSI_GREY_BACKGROUND + ANSI_WHITE + "Game" + ANSI_RESET + " { Times through deck: " + z + " Card in Deck: "+ Math.addExact(i,1) + " } ----");
-                    choice = solver.ask(correct,toSort);
-                    if (matchesRule(choice, options, toSort, rule)) {
+                    choice = solver.ask(correct,toSort); //Ask the Solver to sort a card and give tell it if the last guess was correct
+                    if (matchesRule(choice, options, toSort, rule)) { //If the solver was correct
 						correct = true;
                         numWrongInARow = 0;
                         numCorrect++;
                         numCorrectInARow++;
-                        //System.out.println("numCorrectInARow:" + numCorrectInARow);
-                        if(numCorrectInARow > maxNumCorrectInARow) {
+                        if(numCorrectInARow > maxNumCorrectInARow) { //If the numCorrectInARow is higher than the highest it has ever previously been
                         	maxNumCorrectInARow = numCorrectInARow;
 						}
                         if(numCorrectInARow > 10) {
@@ -116,7 +115,6 @@ public class Game {
                         numCorrectInARow = 0;
                         numWrong++;
                         numWrongInARow++;
-                        //System.out.println("numWrongInARow:" + numWrongInARow);
 						if(numWrongInARow > maxNumWrongInARow) {
 							maxNumWrongInARow = numWrongInARow;
 						}
@@ -129,6 +127,7 @@ public class Game {
                 }
             }
         } else { //Generate options each time
+            System.out.println("VARIANT");
             solver = new Solver();
             for(int z  = 0; z<numRunsThroughDeck; z++) {
                 for (int i = 0; i < deck.size(); i++) {
